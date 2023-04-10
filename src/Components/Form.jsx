@@ -1,7 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+
+import { ContextGlobal } from "./utils/global.context";
 
 const Form = () => {
   //Aqui deberan implementar el form completo con sus
+  const { currentContext } = useContext(ContextGlobal)
+  const { theme } = currentContext
 
   const [selectName, setSelectName] = useState("");
   const [mail, setMail] = useState("");
@@ -85,17 +89,26 @@ const Form = () => {
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
+    <div className={theme}>
+      <form onSubmit={handleSubmit}
+      action="#"
+      target=""
+      method="get"
+      name="formDatosPersonales">
         <input
           type="text"
-          placeholder="Name"
+          name="nombre"
+          id="nombre"
+          placeholder="Write your name"
           value={selectName}
           onChange={onChangeSelectName}
         />
 
         <input
           type="mail"
+          name="email"
+          id="email"
+          required
           placeholder="mail"
           value={mail}
           onChange={onChangeMail}

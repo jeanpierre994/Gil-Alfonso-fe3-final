@@ -1,37 +1,40 @@
-import { createContext, useMemo, useState } from "react";
+import { createContext, useMemo, useReducer } from "react";
 
-export const initialState = {theme: "light", data: []}
+export const initialState = { isDarkMode: "", data: [] };
 
 export const ContextGlobal = createContext(initialState);
+
+
+
+
+const contextReducer = (state, action) => {
+  const casesObject = {
+    "TOGGLE_THEME": {...state, theme: state.theme === "light" ? "dark" : "light"},
+    "UPDATE_FAVORITES": {...state, data: action.payload}
+  }
+  return casesObject[action.type] ? casesObject[action.type] : state
+}
+
+
+const initContextReducer = () => ({
+  theme: "light",
+  data: localStorage.getItem("favoritesDentists") ? JSON.parse(localStorage.getItem("favoritesDentists")) : []
+})
 
 
 
 export const ContextProvider = ({ children }) => {
   //Aqui deberan implementar la logica propia del Context, utilizando el hook useMemo
 
-  const [theme, setTheme] = useState(initialState.theme)
-  const [data, setData] = useState(initialState.data)
-  
-  // const changeTheme = useMemo(() => {
-      
-  // })
-  
+  const [currentContext, dispatchContextUpdate] = useReducer(contextReducer, initialState, initContextReducer)
 
+  const contextMemo = useMemo(()=>{
+    localStorage.setItem('favoritesDentists', JSON.stringify(currentContext.data))
+    return {currentContext, dispatchContextUpdate}
+  }, [currentContext])
 
-  const anotherData = useMemo(()=>{
-    const getDentists = async() => {
-      const dataFetched = await fetch('https://jsonplaceholder.typicode.com/users')
-      .then((response) => {
-        return response.json()
-      })
-      return(dataFetched)
-    }
-    localStorage.setItem('favoritesDentists', JSON.stringify(data))
-    return {getDentists, theme, data, setTheme, setData}
-  }, [theme, data])
-  
   return (
-    <ContextGlobal.Provider value={anotherData}>
+    <ContextGlobal.Provider value={contextMemo}>
       {children}
     </ContextGlobal.Provider>
   );

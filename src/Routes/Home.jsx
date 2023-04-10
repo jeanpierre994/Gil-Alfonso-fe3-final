@@ -1,9 +1,14 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import Card from '../Components/Card'
+import { ContextGlobal } from '../Components/utils/global.context'
 
 //Este componente debera ser estilado como "dark" o "light" dependiendo del theme del Context
 
 const Home = () => {
+
+  const { currentContext } = useContext(ContextGlobal)
+
+  const { theme } = currentContext
 
   const [dentist, setDentist] = useState([])
 
@@ -23,13 +28,13 @@ const Home = () => {
   },[])
 
   return (
-    <main className="" >
+    <main className={theme} >
       <h1>Home</h1>
-      <div className='card-grid'>
+      <div  className='card-grid'>
         {/* Aqui deberias renderizar las cards */}
         {dentist.map((dentist)=>{
           return (
-          <Card key={dentist.id} name ={dentist.name} id={dentist.id} username={dentist.username}/>)
+          <Card  key={dentist.id} name ={dentist.name} id={dentist.id} username={dentist.username}/>)
         })}
       </div>
     </main>
